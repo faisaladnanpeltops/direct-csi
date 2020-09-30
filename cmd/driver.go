@@ -29,14 +29,14 @@ import (
 	"github.com/minio/minio/pkg/ellipses"
 )
 
-func driver(args []string) error {
-	idServer, err := id.NewIdentityServer(identity, Version, map[string]string{})
+func initDriver(args []string) error {
+	idServer, err := id.NewIdentityServer(identity, version, map[string]string{})
 	if err != nil {
 		return err
 	}
 	glog.V(5).Infof("identity server started")
 
-	basePaths := []string{}
+	var basePaths []string
 	for _, a := range args {
 		if ellipses.HasEllipses(a) {
 			p, err := ellipses.FindEllipsesPatterns(a)
@@ -52,8 +52,18 @@ func driver(args []string) error {
 		}
 	}
 
+	// TODO: support devices
+	var drives = make([]volume.DriveInfo, len(basePaths))
+	for i, path := range basePaths {
+		drives[i], err = volume.GetInfo(path)
+		if err != nil {
+			// fail if one of the drive is not accessible
+			return err
+		}
+	}
+
 	glog.V(10).Infof("base paths: %s", strings.Join(basePaths, ","))
-	volume.InitializeFactory(basePaths)
+	volume.InitializeDrives(drives)
 	if err := volume.InitializeClient(identity); err != nil {
 		return err
 	}

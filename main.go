@@ -1,3 +1,5 @@
+// +build go1.14
+
 // This file is part of MinIO Kubernetes Cloud
 // Copyright (c) 2020 MinIO, Inc.
 //

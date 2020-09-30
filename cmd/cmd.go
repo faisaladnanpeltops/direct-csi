@@ -27,7 +27,7 @@ import (
 	_ "github.com/golang/glog"
 )
 
-var Version string
+var version string
 
 // flags
 var (
@@ -51,9 +51,9 @@ For more information, use '%s man [sched | examples | ...]'
 `, os.Args[0]),
 	SilenceUsage: true,
 	RunE: func(c *cobra.Command, args []string) error {
-		return driver(args)
+		return initDriver(args)
 	},
-	Version: Version,
+	Version: version,
 }
 
 func init() {
